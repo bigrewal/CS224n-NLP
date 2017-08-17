@@ -18,7 +18,7 @@
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**
-CNN/MNIST_data/
+assignment1/.idea/**
 
 # Gradle:
 .idea/**/gradle.xml
