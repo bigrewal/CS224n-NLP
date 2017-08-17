@@ -20,6 +20,7 @@
 .idea/**
 assignment1/.env/**
 assignment1/__pycache__
+assignment1/utils/datasets/
 
 
 # Gradle:
@@ -232,3 +233,5 @@ ENV/
 /site
 
 # End of https://www.gitignore.io/api/macos,python,pycharm,intellij
+.gitignore
+.idea/
