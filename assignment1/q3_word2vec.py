@@ -58,9 +58,15 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
     assignment!
     """
 
-    ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+    out = np.dot(outputVectors, predicted)
+    probs = softmax(out) #  P(o | c)
+    cost = -np.log(probs[target])
+
+    delta3 = probs
+    delta3[target] -= 1
+
+    grad = np.outer(delta3, predicted)
+    gradPred = np.dot(delta3, outputVectors)
 
     return cost, gradPred, grad
 
@@ -96,9 +102,24 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
     indices = [target]
     indices.extend(getNegativeSamples(target, dataset, K))
 
-    ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+    target_vector = outputVectors[target]           #target_output_vector
+    negative_vectors = outputVectors[indices[1:]]   #negative samples
+
+    cost = - np.log(sigmoid(np.dot(target_vector, predicted))) - np.sum(np.log(sigmoid(np.dot(-negative_vectors, predicted))))
+
+    grad = np.zeros(outputVectors.shape)
+
+    #Gradient of the Context Word - word vectors
+    for k in indices:
+        if k == target:
+            grad[k] = (sigmoid(np.dot(outputVectors[k], predicted)) - 1.0) * predicted
+        else:
+            grad[k] += (sigmoid(np.dot(outputVectors[k], predicted))) * predicted
+
+    # Gradient of the Centre Word - word vectors
+    gradPred = ((sigmoid(np.dot(target_vector, predicted)) - 1.0) * target_vector
+        + np.dot(sigmoid(np.dot(negative_vectors, predicted)), negative_vectors)
+    )
 
     return cost, gradPred, grad
 
@@ -126,14 +147,18 @@ def skipgram(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     cost -- the cost function value for the skip-gram model
     grad -- the gradient with respect to the word vectors
     """
-
     cost = 0.0
     gradIn = np.zeros(inputVectors.shape)
     gradOut = np.zeros(outputVectors.shape)
 
-    ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+    centreWord = inputVectors[tokens[currentWord]]
+
+    for ctx_word in contextWords:
+        target =tokens[ctx_word]
+        loss, gradPred, grad = word2vecCostAndGradient(centreWord, target, outputVectors, dataset)
+        cost += loss
+        gradIn += gradPred
+        gradOut += grad
 
     return cost, gradIn, gradOut
 
@@ -156,8 +181,7 @@ def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     gradOut = np.zeros(outputVectors.shape)
 
     ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+
 
     return cost, gradIn, gradOut
 
@@ -174,7 +198,7 @@ def word2vec_sgd_wrapper(word2vecModel, tokens, wordVectors, dataset, C,
     N = wordVectors.shape[0]
     inputVectors = wordVectors[:N/2,:]
     outputVectors = wordVectors[N/2:,:]
-    for i in xrange(batchsize):
+    for i in range(batchsize):
         C1 = random.randint(1,C)
         centerword, context = dataset.getRandomContext(C1)
 
@@ -202,7 +226,7 @@ def test_word2vec():
     def getRandomContext(C):
         tokens = ["a", "b", "c", "d", "e"]
         return tokens[random.randint(0,4)], \
-            [tokens[random.randint(0,4)] for i in xrange(2*C)]
+            [tokens[random.randint(0,4)] for i in range(2*C)]
     dataset.sampleTokenIdx = dummySampleTokenIdx
     dataset.getRandomContext = getRandomContext
 

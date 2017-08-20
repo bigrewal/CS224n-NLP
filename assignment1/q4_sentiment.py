@@ -18,7 +18,6 @@ from q3_sgd import load_saved_params, sgd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
 
-
 def getArguments():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
@@ -49,7 +48,10 @@ def getSentenceFeatures(tokens, wordVectors, sentence):
     sentVector = np.zeros((wordVectors.shape[1],))
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    for word in sentence:
+        sentVector += wordVectors[tokens[word]]
+
+    sentVector /= len(sentence)
     ### END YOUR CODE
 
     assert sentVector.shape == (wordVectors.shape[1],)
@@ -63,7 +65,7 @@ def getRegularizationValues():
     """
     values = None   # Assign a list of floats in the block below
     ### YOUR CODE HERE
-    raise NotImplementedError
+    values = [np.power(10.0, p) for p in np.arange(-6, 10)]
     ### END YOUR CODE
     return sorted(values)
 
@@ -85,9 +87,13 @@ def chooseBestModel(results):
     Your chosen result dictionary.
     """
     bestResult = None
-
+    acc = 0
     ### YOUR CODE HERE
-    raise NotImplementedError
+    for result in results:
+        if(result["dev"] > acc):
+            acc = result["dev"]
+            bestResult = result
+
     ### END YOUR CODE
 
     return bestResult
