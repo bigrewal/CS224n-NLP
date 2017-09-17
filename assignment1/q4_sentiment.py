@@ -18,6 +18,7 @@ from q3_sgd import load_saved_params, sgd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
 
+
 def getArguments():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
@@ -48,10 +49,9 @@ def getSentenceFeatures(tokens, wordVectors, sentence):
     sentVector = np.zeros((wordVectors.shape[1],))
 
     ### YOUR CODE HERE
-    for word in sentence:
-        sentVector += wordVectors[tokens[word]]
-
-    sentVector /= len(sentence)
+    idxs = tokens[sentence]
+    sentenceVector = wordVectors[idxs]
+    sentVector = np.sum(sentenceVector,axis=0)/len(sentence)
     ### END YOUR CODE
 
     assert sentVector.shape == (wordVectors.shape[1],)
@@ -65,9 +65,9 @@ def getRegularizationValues():
     """
     values = None   # Assign a list of floats in the block below
     ### YOUR CODE HERE
-    values = [np.power(10.0, p) for p in np.arange(-6, 10)]
+    values = [0,0.01,0.02,0.04,0.08,0.16,0.32,0.64,1.28,2.56,5.12,10.24]
     ### END YOUR CODE
-    return sorted(values)
+    return values
 
 
 def chooseBestModel(results):
@@ -87,13 +87,10 @@ def chooseBestModel(results):
     Your chosen result dictionary.
     """
     bestResult = None
-    acc = 0
-    ### YOUR CODE HERE
-    for result in results:
-        if(result["dev"] > acc):
-            acc = result["dev"]
-            bestResult = result
 
+    ### YOUR CODE HERE
+    if bestResult == None or results['dev'] > bestResult['dev']:
+        bestResult = results
     ### END YOUR CODE
 
     return bestResult
@@ -230,7 +227,7 @@ def main(args):
     print("=== Recap ===")
     print("Reg\t\tTrain\tDev\tTest")
     for result in results:
-        print("%.2E\t%.3f\t%.3f\t%.3f" % (
+        print ("%.2E\t%.3f\t%.3f\t%.3f" % (
             result["reg"],
             result["train"],
             result["dev"],

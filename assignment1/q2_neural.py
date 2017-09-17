@@ -35,25 +35,26 @@ def forward_backward_prop(data, labels, params, dimensions):
     ofs += H * Dy
     b2 = np.reshape(params[ofs:ofs + Dy], (1, Dy))
 
-    ## forward propagation
+    ### YOUR CODE HERE: forward propagation
     Z1 = np.dot(data,W1)+b1
     A1 = sigmoid(Z1)
 
     Z2 = np.dot(A1,W2)+b2
     A2 = softmax(Z2)
-
     cost = -np.sum((np.log(A2) * labels))
+    ### END YOUR CODE
 
-    ### backward propagation
-    d_a2 = A2 - labels
-    gradb2 = np.sum(d_a2,axis=0).reshape(b2.shape)
-    gradW2 = np.dot(np.transpose(A1),d_a2)
+    ### YOUR CODE HERE: backward propagation
+    dout = A2 - labels
+    gradb2 = np.sum(dout,axis=0).reshape(1,Dy)
+    gradW2 = np.dot(np.transpose(A1),dout)
 
-    grad_Z2 = np.transpose(np.dot(W2,np.transpose(d_a2)))
-    grad_sig = sigmoid_grad(A1) * grad_Z2
+    gradZ2 = np.transpose(np.dot(W2,np.transpose(dout)))
+    gradSig = gradZ2 * sigmoid_grad(A1)
+    gradb1 = np.sum(gradSig,axis=0).reshape(1,H)
+    gradW1 = np.dot(np.transpose(data),gradSig)
 
-    gradW1 = np.dot(np.transpose(data),grad_sig)
-    gradb1 = np.sum(grad_sig,axis=0).reshape(b1.shape)
+    ### END YOUR CODE
 
     ### Stack gradients (do not modify)
     grad = np.concatenate((gradW1.flatten(), gradb1.flatten(),
@@ -85,15 +86,15 @@ def sanity_check():
 
 def your_sanity_checks():
     """
-    # Use this space add any additional sanity checks by running:
-    #     python q2_neural.py
-    # This function will not be called by the autograder, nor will
-    # your additional tests be graded.
-    # """
-    # print("Running your sanity checks...")
-    # ### YOUR CODE HERE
-    # raise NotImplementedError
-    # ### END YOUR CODE
+    Use this space add any additional sanity checks by running:
+        python q2_neural.py
+    This function will not be called by the autograder, nor will
+    your additional tests be graded.
+    """
+    print("Running your sanity checks...")
+    ### YOUR CODE HERE
+    print("No additional checks implemented!")
+    ### END YOUR CODE
 
 
 if __name__ == "__main__":

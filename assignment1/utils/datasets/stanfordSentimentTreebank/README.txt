@@ -40,4 +40,3 @@ Please note that the datasetSentences.txt file has more sentences/lines than the
 Each row in the latter represents a snippet as shown on RT, whereas the former is each sub sentence as determined by the Stanford parser.
 
 For comparing research and training models, please use the provided train/dev/test splits.
-
