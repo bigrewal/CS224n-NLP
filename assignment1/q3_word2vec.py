@@ -15,7 +15,11 @@ def normalizeRows(x):
     """
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    t = np.power(x, 2)
+    t = np.sum(t, axis=1)
+    t = np.sqrt(t)
+    t = t.reshape((x.shape[0], 1))
+    x = x / t
     ### END YOUR CODE
 
     return x
@@ -58,7 +62,14 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
     """
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    out = np.dot(predicted,np.transpose(outputVectors))
+    probs = softmax(out)
+
+    cost = -np.log(probs[target])
+    delta3 = probs[target] - 1
+
+    grad = np.outer(delta3, predicted)
+    gradPred = np.dot(delta3, outputVectors)
     ### END YOUR CODE
 
     return cost, gradPred, grad
@@ -131,7 +142,17 @@ def skipgram(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     gradOut = np.zeros(outputVectors.shape)
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    centerWord_index = tokens[currentWord]
+    predicted = inputVectors[centerWord_index]  #centerWord_Vector
+
+    for word in contextWords:
+        target = tokens[word]
+        loss,gradPred,gradOut_ = word2vecCostAndGradient(predicted, target, outputVectors, dataset)
+
+        gradIn[centerWord_index] += gradPred
+        gradOut += gradOut_
+        cost += loss
+
     ### END YOUR CODE
 
     return cost, gradIn, gradOut
