@@ -85,7 +85,11 @@ def sgd(f, x0, step, iterations, postprocessing=None, useSaved=False,
 
         cost = None
         ### YOUR CODE HERE
-        raise NotImplementedError
+        cost, grad = f(x)
+        x -= step * grad
+
+        if postprocessing:
+            x = postprocessing(x)   # For normalising
         ### END YOUR CODE
 
         if iter % PRINT_EVERY == 0:
@@ -130,9 +134,8 @@ def your_sanity_checks():
     This function will not be called by the autograder, nor will
     your additional tests be graded.
     """
-    print "Running your sanity checks..."
+    print "No Sanity Checks"
     ### YOUR CODE HERE
-    raise NotImplementedError
     ### END YOUR CODE
 
 
